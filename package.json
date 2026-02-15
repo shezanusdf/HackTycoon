@@ -1,0 +1,23 @@
+{
+  "name": "hack-tycoon",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "db:migrate": "npx prisma migrate dev",
+    "db:studio": "npx prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.0.0",
+    "@slack/bolt": "^3.14.0",
+    "dotenv": "^16.3.1",
+    "prisma": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.0",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  }
+}
