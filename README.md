@@ -1,4 +1,4 @@
-# 🎮 HackTycoon - Slack Bot Game
+#  HackTycoon - Slack Bot Game
 
 An addictive idle/grinding game for Slack! Earn Hack Coins (HC), rob other players, gamble on slots, and build your empire.
 
