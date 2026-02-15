@@ -5,6 +5,8 @@ import { handleBalance } from './commands/balance';
 import { handlePitch } from './commands/pitch';
 import { handleShop, handleShopPurchase } from './commands/shop';
 import { handleDeposit, handleWithdraw, handleDepositSubmit, handleWithdrawSubmit } from './commands/banking';
+import { handleRob } from './commands/rob';
+import { handleCoinflip, handleCoinflipChoice, handleDuelResponse } from './commands/coinflip';
 
 
 dotenv.config()
@@ -21,6 +23,8 @@ app.command('/work', handleWork);
 app.command('/bal', handleBalance);
 app.command('/pitch', handlePitch);
 app.command('/shop', handleShop);
+app.command('/rob', handleRob);
+app.command('/coinflip', handleCoinflip);
 
 app.command('/help', async ({ command, ack, say }) => {
   await ack();
@@ -29,7 +33,10 @@ app.command('/help', async ({ command, ack, say }) => {
           '`/work` - Grind and earn HC\n' +
           '`/bal` - Check your balance\n' +
           '`/shop` - Browse items\n' +
-          '`/pitch` - Pitch VCs'
+          '`/pitch <amount>` - Spin the slots\n' +
+          '`/rob @user <amount>` - Steal from others\n' +
+          '`/coinflip <amount>` - 50/50 gamble\n' +
+          '`/coinflip @user <amount>` - Challenge to duel'
   });
 });
 
@@ -40,6 +47,14 @@ app.action('withdraw_money', handleWithdraw);
 
 // Shop purchase button handlers (matches buy_coffee, buy_laptop, etc.)
 app.action(/^buy_.*/, handleShopPurchase);
+
+// Coinflip button handlers
+app.action('coinflip_heads', handleCoinflipChoice);
+app.action('coinflip_tails', handleCoinflipChoice);
+
+// Coinflip duel button handlers
+app.action('duel_accept', handleDuelResponse);
+app.action('duel_decline', handleDuelResponse);
 
 // Modal submission handlers
 app.view('deposit_modal', handleDepositSubmit);

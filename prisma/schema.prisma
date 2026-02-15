@@ -36,11 +36,14 @@ model User {
   recentRobTargets String?
 
   robsAttempted Int @default(0)
-  robsSuceeded Int @default(0)
+  robsSucceeded Int @default(0)
   robsFailed Int @default(0)
   totalStolen Int @default(0)
   totalLostToRobbers Int @default(0)
 
+  lastCoinflip DateTime?
+  coinflipsPlayed Int @default(0)
+  coinflipsWon Int @default(0)
 
   ownedItems String? 
 
