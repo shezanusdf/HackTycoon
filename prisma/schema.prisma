@@ -20,8 +20,8 @@ model User {
   channelId String
   username String
 
-  balance Int @default(100)
-  bank Int @default(0)
+  balance Int @default(100) //wallet  (can be stolen from)
+  bank Int @default(0) // cannot be stolen from
 
   lastWork DateTime?
   
@@ -30,6 +30,17 @@ model User {
   currentStreak Int @default(0)
   longestStreak Int @default(0)
   lastStreakDate DateTime?
+
+  lastRob DateTime?
+  lastRobbed DateTime?
+  recentRobTargets String?
+
+  robsAttempted Int @default(0)
+  robsSuceeded Int @default(0)
+  robsFailed Int @default(0)
+  totalStolen Int @default(0)
+  totalLostToRobbers Int @default(0)
+
 
   ownedItems String? 
 

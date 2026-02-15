@@ -1,5 +1,7 @@
 import { SlackCommandMiddlewareArgs } from "@slack/bolt";
+import { calculateCooldown, maybeUpgradeRarity, calculateWorkEarnings } from '../utils/itemEffects';
 import { getOrCreateUser, canWork, prisma } from "../database/queries";
+
 const WORK_OUTCOMES = [
   // Common (70% chance)
   { text: "You shipped a feature! :tada:", amount: 75, rarity: "common" },
@@ -26,8 +28,6 @@ const WORK_OUTCOMES = [
   { text: "GOT ACQUIRED BY GOOGLE! :flying_money_with_wings:", amount: 10000, rarity: "legendary" },
   { text: "YC ACCEPTED YOUR STARTUP! :rocket:", amount: 15000, rarity: "legendary" }
 ];
-
-const COOLDOWN_MINUTES = 5;
 
 function isSameDay(date1: Date, date2: Date){
         return date1.toDateString() === date2.toDateString();
@@ -84,18 +84,21 @@ export async function handleWork(args: SlackCommandMiddlewareArgs) {
         const username = command.user_name;
         const channelId = command.channel_id;
 
+        //get or create user
+        const user = await getOrCreateUser(slackId, username, channelId);
+
         //check cooldown
-        const canDoWork = await canWork(slackId, channelId, COOLDOWN_MINUTES);
+        const ownedItems = user.ownedItems ? JSON.parse(user.ownedItems) : [];
+        const cooldownMinutes = calculateCooldown(ownedItems);
+        const canDoWork = await canWork(slackId, channelId, cooldownMinutes)
     if (!canDoWork) {
         await respond({
-            text: '⏰ You\'re still working on the last feature! Try again in a few minutes.',
+            text: '⏰ You\'re still working on the last feature! Try again in ${cooldownMinutes} minutes.',
             response_type: 'ephemeral' 
         });
         return;
     }
 
-    //get or create user
-    const user = await getOrCreateUser(slackId, username, channelId);
 
     //streak vars
     const today = new Date();
@@ -123,9 +126,17 @@ export async function handleWork(args: SlackCommandMiddlewareArgs) {
 
     const newLongestStreak = Math.max(newStreak, user.longestStreak);
 
-    const outcome = getRandomOutcome();
+    let outcome = getRandomOutcome();
 
-    const totalEarnings = outcome.amount + streakBonus;
+    //herman miller chair
+    const upgradedRarity = maybeUpgradeRarity(outcome.rarity, ownedItems);
+    if (upgradedRarity !== outcome.rarity) {
+        const upgradePool = WORK_OUTCOMES.filter(o => o.rarity === upgradedRarity);
+        outcome = upgradePool[Math.floor(Math.random() * upgradePool.length)];
+    }
+
+    const earningsResult = calculateWorkEarnings(outcome.amount, streakBonus, ownedItems);
+    const totalEarnings = earningsResult.finalAmount;
 
     // OPTIMIZED: Single database query instead of 3
     const UpdatedUser = await prisma.user.update({
@@ -237,7 +248,7 @@ export async function handleWork(args: SlackCommandMiddlewareArgs) {
             elements: [
             {
                 type: "mrkdwn",
-                text: `⏰ Next work available in ${COOLDOWN_MINUTES} minutes`
+                text: `⏰ Next work available in ${cooldownMinutes} minutes`
             }
             ]
         }

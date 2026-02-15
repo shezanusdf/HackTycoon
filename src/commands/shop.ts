@@ -1,15 +1,16 @@
 import { SlackCommandMiddlewareArgs } from '@slack/bolt';
 import { getOrCreateUser, updateBalance, prisma } from '../database/queries';
 
-export const SHOP_ITEMS = [
-  { id: "coffee", name: ":coffee: Coffee Machine", price: 500, description: "Essential for coding" },
-  { id: "laptop", name: ":m1max: MacBook Pro", price: 2000, description: "Faster development" },
-  { id: "chair", name: ":chair: Herman Miller Chair", price: 1500, description: "Comfort matters" },
-  { id: "monitor", name: ":desktop_computer: 4K Monitor", price: 1000, description: "More screen space" },
-  { id: "desk", name: ":office: Standing Desk", price: 800, description: "Healthy workspace" },
-  { id: "headphones", name: ":headphones: AirPods Max", price: 600, description: "Focus mode" },
-  { id: "keyboard", name: ":keyboard: Mechanical Keyboard", price: 300, description: "Clicky satisfaction" },
+const SHOP_ITEMS = [
+  { id: "coffee", name: ":coffee: Coffee Machine", price: 500, description: "Essential for coding", effect: "-1 min work cooldown (5min → 4min)" },
+  { id: "laptop", name: ":m1max: MacBook Pro", price: 2000, description: "Faster development", effect: "+15% work earnings" },
+  { id: "chair", name: ":chair: Herman Miller Chair", price: 1500, description: "Comfort matters", effect: "+5% chance to upgrade work rarity" },
+  { id: "monitor", name: ":desktop_computer: 4K Monitor", price: 1000, description: "More screen space", effect: "+10% work earnings" },
+  { id: "desk", name: ":office: Standing Desk", price: 800, description: "Healthy workspace", effect: "+25% streak bonuses" },
+  { id: "headphones", name: ":headphones: AirPods Max", price: 600, description: "Focus mode", effect: "+5% pitch win rate (coming soon)" },
+  { id: "keyboard", name: ":keyboard: Mechanical Keyboard", price: 300, description: "Clicky satisfaction", effect: "+50 HC flat per work" }
 ];
+
 
 export async function handleShop(args: SlackCommandMiddlewareArgs) {
   const { ack, respond, command } = args;
@@ -112,8 +113,9 @@ export async function handleShop(args: SlackCommandMiddlewareArgs) {
       text: {
         type: "mrkdwn",
         text: owned
-          ? `*${item.name}* :tick-daamin:\n_${item.description}_\n*OWNED*`
-          : `*${item.name}*\n_${item.description}_\n*Price:* \`$${item.price.toLocaleString()} HC\``
+          ? `*${item.name}* ✅\n_${item.description}_\n\`${item.effect}\`\n*OWNED*`
+          : `*${item.name}*\n_${item.description}_\n\`${item.effect}\`\n*Price:* \`$${item.price.toLocaleString()} HC\``
+
       },
       accessory: owned ? undefined : {
         type: "button",
