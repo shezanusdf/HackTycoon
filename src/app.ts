@@ -6,7 +6,7 @@ import { handlePitch } from './commands/pitch';
 import { handleShop, handleShopPurchase } from './commands/shop';
 import { handleDeposit, handleWithdraw, handleDepositSubmit, handleWithdrawSubmit } from './commands/banking';
 import { handleRob } from './commands/rob';
-import { handleCoinflip, handleCoinflipChoice, handleDuelResponse } from './commands/coinflip';
+import { handleCoinflip, handleCoinflipChoice } from './commands/coinflip';
 
 
 dotenv.config()
@@ -35,28 +35,18 @@ app.command('/help', async ({ command, ack, say }) => {
           '`/shop` - Browse items\n' +
           '`/pitch <amount>` - Spin the slots\n' +
           '`/rob @user <amount>` - Steal from others\n' +
-          '`/coinflip <amount>` - 50/50 gamble\n' +
-          '`/coinflip @user <amount>` - Challenge to duel'
+          '`/coinflip <amount>` - 50/50 gamble'
   });
 });
 
-
-// Button handlers for deposit/withdraw
 app.action('deposit_money', handleDeposit);
 app.action('withdraw_money', handleWithdraw);
 
-// Shop purchase button handlers (matches buy_coffee, buy_laptop, etc.)
 app.action(/^buy_.*/, handleShopPurchase);
 
-// Coinflip button handlers
 app.action('coinflip_heads', handleCoinflipChoice);
 app.action('coinflip_tails', handleCoinflipChoice);
 
-// Coinflip duel button handlers
-app.action('duel_accept', handleDuelResponse);
-app.action('duel_decline', handleDuelResponse);
-
-// Modal submission handlers
 app.view('deposit_modal', handleDepositSubmit);
 app.view('withdraw_modal', handleWithdrawSubmit);
 
