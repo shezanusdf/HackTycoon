@@ -24,16 +24,16 @@ export async function handleCoinflip(args: any) {
     const betAmount = parseInt(command.text.trim());
 
     if (!betAmount || betAmount < MIN_BET) {
-        await respond({ text: `text: Usage: \coinflip <amount>\nMin: $${MIN_BET} HC`, response_type: 'ephemeral' });
+        await respond({ text: `❌ Usage: \coinflip <amount>\nMin: $${MIN_BET} HC`, response_type: 'ephemeral' });
         return;
     }
 
-    if (!betAmount || betAmount < MAX_BET) {
-        await respond({ text: `text: Usage: \coinflip <amount>\Max: $${MAX_BET} HC`, response_type: 'ephemeral' });
+    if (!betAmount || betAmount > MAX_BET) {
+        await respond({ text: `❌ Usage: \coinflip <amount>\Max: $${MAX_BET} HC`, response_type: 'ephemeral' });
         return;
     }
     if (!(await canCoinflip(slackId, channelId))) {
-        await respond({ text: `text:⏰ Wait ${COINFLIP_COOLDOWN_SECONDS}s between flips`, response_type: 'ephemeral' });
+        await respond({ text: `⏰ Wait ${COINFLIP_COOLDOWN_SECONDS}s between flips`, response_type: 'ephemeral' });
         return;
     }
 
@@ -50,8 +50,8 @@ export async function handleCoinflip(args: any) {
             {
                 type: 'actions',
                 elements: [
-                   {type: 'buttons', text: {type: 'plain_text', text: '🟡 HEADS' }, value: JSON.stringify({ betAmount, slackId, channelId}), action_id: 'coinflip_heads', style: 'primary'},
-                   {type: 'buttons', text: {type: 'plain_text', text: '⚪ TAILS' }, value: JSON.stringify({ betAmount, slackId, channelId}), action_id: 'coinflip_tails'}
+                   {type: 'button', text: {type: 'plain_text', text: '🟡 HEADS' }, value: JSON.stringify({ betAmount, slackId, channelId}), action_id: 'coinflip_heads', style: 'primary'},
+                   {type: 'button', text: {type: 'plain_text', text: '⚪ TAILS' }, value: JSON.stringify({ betAmount, slackId, channelId}), action_id: 'coinflip_tails'}
                 ]
             }
         ]
