@@ -6,9 +6,8 @@ An addictive idle/grinding game for Slack! Earn Hack Coins (HC), rob other playe
 
 ### Core Gameplay
 - **/work** - Grind and earn HC with daily streaks (5min cooldown)
-- ** /bal** - Check wallet & bank balance
-- ** Banking** - Deposit/withdraw to protect money from robbers
-- ** /shop** - Buy items that boost your earnings
+- **/bal** - Check wallet & bank balance & Deposit/withdraw
+- **/shop** - Buy items that boost your earnings
 
 ### Gambling & PvP
 - **🎰 /pitch** - Animated slot machine with 4 symbols
