@@ -45,6 +45,9 @@ model User {
   coinflipsPlayed Int @default(0)
   coinflipsWon Int @default(0)
 
+  lastDaily DateTime?
+  dailyStreak Int @default(0)
+
   ownedItems String? 
 
   createdAt DateTime @default(now())

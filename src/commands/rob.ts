@@ -15,7 +15,6 @@ async function canRob(slackId: string, channelId: string): Promise<boolean> {
     const user = await prisma.user.findUnique({
         where: { slackId_channelId: { slackId, channelId } }
     });
-
     if (!user || !user.lastRob) return true;
 
     const now = new Date();
@@ -72,7 +71,7 @@ async function addRecentTarget(robberslackId: string, targetslackId: string, cha
 }
 
 export async function handleRob(args: any) {
-    const { command, ack, say, respond } = args;
+    const { command, ack, say, respond, client } = args;
     await ack();
 
     try {
@@ -241,6 +240,16 @@ export async function handleRob(args: any) {
             }
             ]
         });
+
+        // Send DM notification to victim
+        try {
+            await client.chat.postMessage({
+                channel: targetSlackId,
+                text: `💀 You were robbed by <@${robberslackId}>!\nThey stole $${robAmount.toLocaleString()} HC from you.\n\n💡 Tip: Use \`/deposit\` to keep money safe in your bank!`
+            });
+        } catch (err) {
+            // User might have DMs disabled, that's okay
+        }
         } else {
         // Failure: Robber loses 2x
         await prisma.user.update({
